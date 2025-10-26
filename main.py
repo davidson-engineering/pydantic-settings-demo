@@ -93,7 +93,11 @@ class MyAppSettings(BaseSettings):
 
 def print_env_vars() -> None:
     """Print existing MYAPP_ environment variables."""
-    env_vars = [(k, v) for k, v in os.environ.items() if k.startswith("MYAPP_")]
+    env_vars = [
+        (k, v)
+        for k, v in os.environ.items()
+        if (k.startswith("MYAPP_") or k.startswith("MYCUSTOMAPP_"))
+    ]
     if env_vars:
         print("\nExisting MYAPP_ environment variables:")
         for key, value in env_vars:

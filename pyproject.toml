@@ -19,20 +19,16 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/davidson.engineering/pydantic-settings-demo"
 "Repository" = "https://github.com/davidson.engineering/pydantic-settings-demo.git"
-"Bug Tracker" = "https://github.com/davidson.engineering/pydantic-settings-demo/issues"
 
 [project.scripts]
-pydantic-envar-demo = "pydantic_envar_demo.__main__:main"
-
-[tool.pytest.ini_options]
-addopts = "-v --cov=pydantic_envar_test --cov-report=html"
-testpaths = ["tests"]
+pydantic-settings-demo = "pydantic_settings_demo.__main__:main"
 
 [tool.black]
 line-length = 88
