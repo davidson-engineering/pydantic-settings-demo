@@ -22,14 +22,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.3.3,<9.0.0",
-    "pytest-cov>=5.0.0,<6.0.0",
-    "black>=24.10.0,<25.0.0",
-    "isort>=5.13.2,<6.0.0",
-]
-
 [project.urls]
 "Homepage" = "https://github.com/davidson.engineering/pydantic-settings-demo"
 "Repository" = "https://github.com/davidson.engineering/pydantic-settings-demo.git"

@@ -79,11 +79,14 @@ class MyAppSettings(BaseSettings):
 
     def print_settings(self, mask_secrets: bool = True) -> None:
         """Print settings, optionally masking secret values."""
-        print(f"\nSettings for {self.__class__.__name__}:")
-        print("-" * (18 + len(self.__class__.__name__)))
+        if mask_secrets:
+            print(f"\nSettings for {self.__class__.__name__} (secrets masked):")
+        else:
+            print(f"\nSettings for {self.__class__.__name__} (secrets exposed):")
+        print("-" * (40 + len(self.__class__.__name__)))
         for field, value in self.__dict__.items():
-            if isinstance(value, SecretStr) and mask_secrets:
-                print(f"{field}: {'*' * 8}")
+            if isinstance(value, SecretStr) and (not mask_secrets):
+                print(f"{field}:{value.get_secret_value()}")
             else:
                 print(f"{field}: {value}")
 
@@ -127,6 +130,7 @@ def main() -> None:
             env_file=".env",
             env_file_encoding="utf-8",
             case_sensitive=False,
+            extra="allow",
         )
 
     class ProdSettings(MyAppSettings):
@@ -135,6 +139,7 @@ def main() -> None:
             env_file=(".env", ".env.prod"),
             env_file_encoding="utf-8",
             case_sensitive=False,
+            extra="allow",
         )
 
     class DevSettings(MyAppSettings):
@@ -143,6 +148,16 @@ def main() -> None:
             env_file=(".env", ".env.dev"),
             env_file_encoding="utf-8",
             case_sensitive=False,
+            extra="allow",
+        )
+
+    class CustomSettings(MyAppSettings):
+        model_config = SettingsConfigDict(
+            env_prefix="MYCUSTOMAPP_",
+            env_file=".env",
+            env_file_encoding="utf-8",
+            case_sensitive=False,
+            extra="allow",
         )
 
     try:
@@ -154,7 +169,7 @@ def main() -> None:
         # Demonstrate environment variable override
         print("\nSetting MYAPP_DATABASE_URL to demonstrate env var precedence...")
         os.environ["MYAPP_DATABASE_URL"] = (
-            "this.will.always.win.over.files/database_url"
+            "env.will.always.win.over.env-files/database_url"
         )
         prod_settings = ProdSettings()
 
@@ -189,9 +204,12 @@ def main() -> None:
             (prod_settings, "Production"),
             (dev_settings, "Development"),
         ]:
-            print(f"\nUnmasked settings for {settings.__class__.__name__} ({label}):")
-            print("-" * (18 + len(settings.__class__.__name__) + len(label) + 2))
             settings.print_settings(mask_secrets=False)
+
+        print("\nDemonstrating CustomSettings with custom `MYCUSTOMAPP_` env prefix...")
+        os.environ["MYCUSTOMAPP_DATABASE_URL"] = "sqlite:///custom.db"
+        custom_settings = CustomSettings()
+        custom_settings.print_settings(mask_secrets=True)
 
     except Exception as e:
         print(f"\nError loading settings: {e}")
